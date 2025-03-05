@@ -1,0 +1,64 @@
+from graphviz import Digraph
+
+# Create a directed graph
+dot = Digraph(format='png')
+
+# Add Inputs
+dot.node('x', 'x', shape='circle')
+dot.node('y', 'y', shape='circle')
+dot.node('z', 'z', shape='circle')
+
+# Add NOT gates
+dot.node('x_not', 'NOT', shape='invtriangle')
+dot.edge('x', 'x_not')
+
+dot.node('z_not', 'NOT', shape='invtriangle')
+dot.edge('z', 'z_not')
+
+# Compute (x'z + xz') using AND and OR gates
+dot.node('and1', 'AND', shape='box')
+dot.edge('x_not', 'and1')
+dot.edge('z', 'and1')
+
+dot.node('and2', 'AND', shape='box')
+dot.edge('x', 'and2')
+dot.edge('z_not', 'and2')
+
+dot.node('or1', 'OR', shape='ellipse')
+dot.edge('and1', 'or1')
+dot.edge('and2', 'or1')
+
+# Compute y(x'z + xz')
+dot.node('and3', 'AND', shape='box')
+dot.edge('y', 'and3')
+dot.edge('or1', 'and3')
+
+# Compute yz + yz' using AND and OR gates
+dot.node('and4', 'AND', shape='box')
+dot.edge('y', 'and4')
+dot.edge('z', 'and4')
+
+dot.node('and5', 'AND', shape='box')
+dot.edge('y', 'and5')
+dot.edge('z_not', 'and5')
+
+dot.node('or2', 'OR', shape='ellipse')
+dot.edge('and4', 'or2')
+dot.edge('and5', 'or2')
+
+# Compute x(yz + yz')
+dot.node('and6', 'AND', shape='box')
+dot.edge('x', 'and6')
+dot.edge('or2', 'and6')
+
+# Final OR gate to get F
+dot.node('or3', 'OR', shape='ellipse')
+dot.edge('and3', 'or3')
+dot.edge('and6', 'or3')
+
+# Output
+dot.node('F', 'F(x,y,z)', shape='doublecircle')
+dot.edge('or3', 'F')
+
+# Render and save the diagram
+dot.render('logic_diagram', view=True)
